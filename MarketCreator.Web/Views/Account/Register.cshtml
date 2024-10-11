@@ -4,6 +4,10 @@
     ViewData["Title"] = "ثبت نام";
 }
 
+@section Scripts{
+	<partial name="_ValidationScriptsPartial" />
+}
+
 <div class="breadcrumbs_area">
 	<div class="container">
 		<div class="row">
@@ -26,15 +30,32 @@
 			<div class="col-lg-6 col-md-6 offset-md-3">
 				<div class="account_form register">
 					<h2>ثبت نام</h2>
-					<form action="#">
+					<form asp-controller="Account" asp-action="Register" method="post">
 						<p>
-							<label>آدرس ایمیل <span>*</span></label>
-							<input type="text">
+							<label>نام <span>*</span></label>
+							<input type="text" asp-for="FirstName" />
+							<span class="text-danger" asp-validation-for="FirstName"></span>
 						</p>
-						<p>
+                      	<p>
+							<label>نام خانوادگی <span>*</span></label>
+							<input type="text" asp-for="LastName" />
+							<span class="text-danger" asp-validation-for="LastName"></span>
+						</p>
+                        	<p>
+							<label>شماره موبایل <span>*</span></label>
+							<input type="text" asp-for="Mobile" />
+							<span class ="text-danger" asp-validation-for="Mobile"></span>
+						</p>
+                        <p>
 							<label>رمز عبور <span>*</span></label>
-							<input type="password">
+							<input type="password" asp-for="Password"/>
+							<span class="text-danger" asp-validation-for="Password"></span>
 						</p>
+								<p>
+							<label>تکرار رمز عبور <span>*</span></label>
+							<input type="password" asp-for="ConfirmPassword"/>
+							<span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+						</p>  
 						<div class="login_submit">
 							<button type="submit">ثبت نام</button>
 						</div>

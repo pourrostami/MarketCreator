@@ -25,7 +25,7 @@ namespace MarketCreator.DataLayer.DTOs.Account
         [Display(Name = "موبایل")]
         [Required(ErrorMessage = "{0} نمی تواند خالی باشد")]
         [MaxLength(11, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
-        [RegularExpression("09(1[0-9]|3[1-9]|2[1-9])-?[0-9]{3}-?[0-9]{4}", ErrorMessage = "  {۰} اشتباه است")]
+        [RegularExpression(@"(^(09|9)[0-9]\d{8}$)", ErrorMessage = "موبایل وارد شده صحیح نمی باشد")]
         public string? Mobile { get; set; } = string.Empty;
 
 
@@ -41,5 +41,13 @@ namespace MarketCreator.DataLayer.DTOs.Account
         [Required(ErrorMessage = "{0} نمی تواند خالی باشد")]
         [Compare("Password",ErrorMessage ="پسوردهای وارد شده یکسان نمی باشند")]
         public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+
+    public enum ResultRegisterUser
+    {
+        Success,
+        MobileExists,
+        Error
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MarketCreator.DataLayer.DTOs.Account;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MarketCreator.Web.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : SiteBaseController
     {
 
 
@@ -10,6 +11,13 @@ namespace MarketCreator.Web.Controllers
 
         [HttpGet("register-user")]
         public IActionResult Register()
+        {
+            return View();
+        }
+
+
+        [HttpPost("register-user")]
+        public IActionResult Register(RegisterUsrDTO register)
         {
             return View();
         }
