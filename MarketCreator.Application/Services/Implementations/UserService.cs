@@ -5,6 +5,7 @@ using MarketCreator.DataLayer.DTOs.Account;
 using MarketCreator.DataLayer.Entities.Account;
 using MarketCreator.DataLayer.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace MarketCreator.Application.Services.Implementations
 {
@@ -35,20 +36,68 @@ namespace MarketCreator.Application.Services.Implementations
         }
         #endregion
 
+        #region Password Hash && Salt
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac =new  HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using(var hmac =new HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash);
+            }
+        }
+
+        #endregion
+
         public async Task<ResultRegisterUser> RegisterUserAsync(RegisterUsrDTO register)
         {
             var user = await GetUserByMobileAsync(register.Mobile.Trim());
             if (user == null)
             {
+                CreatePasswordHash(register.Password.Trim(), out byte[]  passwordHash, out byte[] passwordSalt);
+
                 await _userRepository.AddEntityAsync(new User
                 {
                     FirstName = register.FirstName,
                     LastName = register.LastName,
                     Mobile = register.Mobile,
+                    MobileActiveCode = new Random().Next(1000,9999).ToString(),   
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt
                 });
 
                 await _userRepository.SaveChangesAsync();
             } 
+
+            if(user!=null && !user.MobileActivated)
+            {
+                await _userRepository.DeletePermanentAsync(user.Id);
+                CreatePasswordHash(register.Password.Trim(), out byte[] passwordHash, out byte[] passwordSalt);
+
+                await _userRepository.AddEntityAsync(new User
+                {
+                    FirstName = register.FirstName,
+                    LastName = register.LastName,
+                    Mobile = register.Mobile,
+                    MobileActiveCode = new Random().Next(1000, 9999).ToString(),
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt
+                });
+
+                await _userRepository.SaveChangesAsync(); 
+            }
+
+            if(user != null && user.MobileActivated)
+                return ResultRegisterUser.MobileExists;
 
             return ResultRegisterUser.Success;
         }
@@ -57,9 +106,10 @@ namespace MarketCreator.Application.Services.Implementations
 
         #region Dispose
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            throw new NotImplementedException();
+            if( _userRepository!=null )
+                await _userRepository.DisposeAsync();
         }
         #endregion
     }

@@ -1,7 +1,9 @@
 
+using MarketCreator.Application.Services.Implementations;
+using MarketCreator.Application.Services.Interfaces;
+using MarketCreator.DataLayer.Context;
 using MarketCreator.DataLayer.Entities.Account;
-using MarketCreator.DataLayer.Repository;
-using MarketCreator.Web.Context;
+using MarketCreator.DataLayer.Repository; 
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,7 @@ builder.Services.AddControllersWithViews();
   
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUserService,UserService>();
 
 #endregion
 
