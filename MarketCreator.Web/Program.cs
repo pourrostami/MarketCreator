@@ -3,7 +3,8 @@ using MarketCreator.Application.Services.Implementations;
 using MarketCreator.Application.Services.Interfaces;
 using MarketCreator.DataLayer.Context;
 using MarketCreator.DataLayer.Entities.Account;
-using MarketCreator.DataLayer.Repository; 
+using MarketCreator.DataLayer.Repository;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,22 @@ builder.Services.AddDbContext<MarketCreatorDBContext>(options =>
 });
 #endregion
 
+#region Config Authentication
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme= CookieAuthenticationDefaults.AuthenticationScheme;   
+    options.DefaultChallengeScheme= CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme= CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.LogoutPath = "/log-out";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(43200);
+});
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +60,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

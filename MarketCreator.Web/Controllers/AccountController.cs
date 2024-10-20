@@ -42,15 +42,15 @@ namespace MarketCreator.Web.Controllers
                 switch (result) 
                 {
                     case ResultRegisterUser.Error:
-                        TempData["ErrorMessage"] = "متاسفانه ثبت نام انجام  نشد!"; 
+                        TempData[ErrorMessage] = "متاسفانه ثبت نام انجام  نشد!"; 
                         break;
                         case ResultRegisterUser.MobileExists:
-                        TempData["ErrorMessage"] = "متاسفانه ثبت نام انجام  نشد!";
-                        TempData["InfoMessage"] = "با این شماره قبلا ثبت نام انجام شده است";
+                        TempData[ErrorMessage] = "متاسفانه ثبت نام انجام  نشد!";
+                        TempData[InfoMessage] = "با این شماره قبلا ثبت نام انجام شده است";
                         break;
                     case ResultRegisterUser.Success:
-                        TempData["SuccessMessage"] = "تا اینجای کار ثبت نام با موفقیت انجام شد";
-                        TempData["InfoMessage"] = "لطفا در ادامه کد ارسالی به موبایلتان را در قسمت تعیین شده وارد نمایید";
+                        TempData[SuccessMessage] = "تا اینجای کار ثبت نام با موفقیت انجام شد";
+                        TempData[InfoMessage] = "لطفا در ادامه کد ارسالی به موبایلتان را در قسمت تعیین شده وارد نمایید";
                         return RedirectToAction("Login");
 
                 }
@@ -67,6 +67,16 @@ namespace MarketCreator.Web.Controllers
         {
             return View();
         }
+        #endregion
+
+        #region Logout
+
+        [HttpGet("log-out")]
+        public async Task<IActionResult> Logout()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
         #endregion
     }
 }
