@@ -1,0 +1,35 @@
+﻿@{
+    if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                ShowMessage('موفقیت', '@TempData["SuccessMessage"]', 'success')
+            });
+        </script>
+    }
+    if (TempData["InfoMessage"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                ShowMessage('اعلان', '@TempData["InfoMessage"]', 'info')
+            });
+        </script>
+    }
+    if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                ShowMessage('اشتباه', '@TempData["ErrorMessage"]', 'error')
+            });
+        </script>
+    }
+    if (TempData["WarningMessage"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                ShowMessage('هشدار', '@TempData["WarningMessage"]', 'warning')
+            });
+        </script>
+    }
+}
+

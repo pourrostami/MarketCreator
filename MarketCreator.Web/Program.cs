@@ -6,6 +6,8 @@ using MarketCreator.DataLayer.Entities.Account;
 using MarketCreator.DataLayer.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,13 @@ builder.Services.AddAuthentication(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(43200);
 });
 
+#endregion
+
+#region Html Encoder
+
+builder.Services.AddSingleton<HtmlEncoder>(HtmlEncoder.Create(new[] {
+    UnicodeRanges.BasicLatin, UnicodeRanges.Arabic
+}));
 #endregion
 
 var app = builder.Build();

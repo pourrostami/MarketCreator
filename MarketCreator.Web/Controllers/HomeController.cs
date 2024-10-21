@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using MarketCreator.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +9,7 @@ namespace MarketCreator.Web.Controllers
  
 
         public IActionResult Index()
-        {
+        { 
             return View();
         }
           
