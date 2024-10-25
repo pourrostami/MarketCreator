@@ -58,6 +58,9 @@ namespace MarketCreator.Application.Services.Implementations
 
         #endregion
 
+
+        #region Register
+
         public async Task<ResultRegisterUser> RegisterUserAsync(RegisterUsrDTO register)
         {
             var user = await GetUserByMobileAsync(register.Mobile.Trim());
@@ -101,8 +104,34 @@ namespace MarketCreator.Application.Services.Implementations
 
             return ResultRegisterUser.Success;
         }
+        #endregion
 
 
+        #region Login
+        public async Task<ResultLoginUser> LoginUserAsync(LoginUserDTO obj)
+        {
+            //اول سرچ با موبایل انجام میدیم که اینطور موبایلی ثبت شده یا نه
+            var  user = await GetUserByMobileAsync(obj.Mobile);
+
+            if(user==null) return ResultLoginUser.NotFound;
+
+            //اگر اینطور موبایلی باشه ولی پسوردش غلط باشه پس ابتدا پسورد رو چک میکنیم
+            //چجوری کار میکنه؟
+            //پسورد ورودی رو میفرستیم
+            //در کنارش پسورد هش و سالت  یوزری که از دیتابیس بدست آوردیم
+            //اگر پسورد ورودی با هش و سالت دیتابیس یعنی کاربری که با موبایلش بدستش آوردیم ترکیبشون ترو بده 
+            //یعنی درسته پسورد همونه
+            bool result = VerifyPasswordHash(obj.Password, user.PasswordHash, user.PasswordSalt);
+            if(!result) return ResultLoginUser.NotFound;
+
+            //اگر از دو مرحله ی بالایی عبور کرد  یعنی هم همچون موبایلی داریم با همچون پسوردی
+            //پس نوبت بعدی چک کردن موبایل اکتیویتد هست اگر فالز باشه یعنی موبایل تایید نشده موقع ثبت نام
+            if(!user.MobileActivated) return ResultLoginUser.NotActivatedMobile;
+
+            //اگه مراحل بالایی رو عبور کرده باشه یعنی آقا درسته و ادامه ی لاگین شدن
+            return ResultLoginUser.Success;
+        }
+        #endregion
 
         #region Dispose
 

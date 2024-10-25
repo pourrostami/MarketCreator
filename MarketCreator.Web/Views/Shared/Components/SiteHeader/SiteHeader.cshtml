@@ -1,4 +1,7 @@
-﻿<!--header area start-->
+﻿@using System.Security.Claims
+
+
+<!--header area start-->
 <!--Offcanvas menu area start-->
 <div class="off_canvars_overlay">
 </div>
@@ -18,8 +21,17 @@
 					</div>
 					<div class="top_right text-right">
 						<ul>
-							<li><a href="my-account.html"> حساب کاربری </a></li>
-							<li><a href="checkout.html"> پرداخت </a></li>
+@if (User.Identity.IsAuthenticated)
+							{
+								//چون موقع لاگین کردن اسم رو ذخیره کردیم اینجا میتونیم دسترسی داشته باشیم
+								<li><a> سلام @User.FindFirstValue(ClaimTypes.Name) </a></li>
+								<li><a href="#"> صفحه شما </a></li>
+							}
+							else
+							{
+								<li><a href="login-user"> ورود </a></li>
+								<li><a href="register-user"> ثبت نام </a></li>
+							}
 						</ul>
 					</div>
 					<div class="search_container">
@@ -226,8 +238,17 @@
 					<div class="col-lg-6 col-md-6">
 						<div class="top_right text-right">
 							<ul>
-								<li><a href="my-account.html"> حساب کاربری </a></li>
-								<li><a href="checkout.html"> پرداخت </a></li>
+								@if (User.Identity.IsAuthenticated)
+								{
+								//چون موقع لاگین کردن اسم رو ذخیره کردیم اینجا میتونیم دسترسی داشته باشیم
+									<li><a> سلام @User.FindFirstValue(ClaimTypes.Name) </a></li>
+									<li><a href="#"> صفحه شما </a></li>
+								}
+								else
+								{
+									<li><a href="login-user"> ورود </a></li>
+									<li><a href="register-user"> ثبت نام </a></li>
+								}
 							</ul>
 						</div>
 					</div>

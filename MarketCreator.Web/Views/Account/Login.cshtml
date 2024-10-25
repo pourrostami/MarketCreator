@@ -1,3 +1,63 @@
-﻿
+﻿@model MarketCreator.DataLayer.DTOs.Account.LoginUserDTO
 
-<h1>login page</h1>
+@{
+	ViewData["Title"] = "ورود";
+}
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}
+
+<div class="breadcrumbs_area">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="breadcrumb_content">
+					<ul>
+						<li><a href="index.html">خانه</a></li>
+						<li>@ViewData["Title"]</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="customer_login mt-60">
+	<div class="container">
+		<div class="row">
+			<!--register area start-->
+			<div class="col-lg-6 col-md-6 offset-md-3">
+				<div class="account_form register">
+					<h2>@ViewData["Title"]</h2>
+					<form asp-controller="Account" asp-action="Login" method="post"> 
+						<p>
+							<label>شماره موبایل <span>*</span></label>
+							<input type="text" asp-for="Mobile" class="dir_align" />
+							<span class="text-danger" asp-validation-for="Mobile"></span>
+						</p>
+						<p>
+							<label>رمز عبور <span>*</span></label>
+							<input type="password" asp-for="Password" class="dir_align" />
+							<span class="text-danger" asp-validation-for="Password"></span>
+						</p>
+						<div class="login_submit">
+							<a href="#">رمز عبور خود را فراموش کرده اید؟</a>
+							<label for="remember">
+								<input type="checkbox" asp-for="RememberMe" /> به خاطر سپاری
+							</label>
+							<button type="submit">ورود</button>
+
+						</div>
+
+					</form>
+				</div>
+			</div>
+			<!--register area end-->
+		</div>
+	</div>
+</div>
+
+
+
+

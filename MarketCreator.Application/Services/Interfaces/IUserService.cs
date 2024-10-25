@@ -10,5 +10,8 @@ namespace MarketCreator.Application.Services.Interfaces
         Task<User> GetUserByMobileAsync(string mobile);
 
         Task<ResultRegisterUser> RegisterUserAsync(RegisterUsrDTO register);
+
+
+        Task<ResultLoginUser> LoginUserAsync(LoginUserDTO obj);
     }
 }

@@ -1,6 +1,9 @@
 ﻿using MarketCreator.Application.Services.Interfaces;
 using MarketCreator.DataLayer.DTOs.Account;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MarketCreator.Web.Controllers
 {
@@ -26,7 +29,7 @@ namespace MarketCreator.Web.Controllers
         }
 
 
-        [HttpPost("register-user")]
+        [HttpPost("register-user"), ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterUsrDTO register)
         {
 
@@ -67,6 +70,59 @@ namespace MarketCreator.Web.Controllers
         {
             return View();
         }
+
+        [HttpPost("login-user"),ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginUserDTO obj)
+        {
+            if (!ModelState.IsValid)
+                return View(obj);
+
+            var result = await _userService.LoginUserAsync(obj);
+
+            switch (result)
+            {
+                case ResultLoginUser.NotFound:
+                    TempData[ErrorMessage] = "کاربر یافت نشد!";
+                    break;
+
+                case ResultLoginUser.NotActivatedMobile:
+                    TempData[ErrorMessage] = "ثبت نام شما کامل انجام نشده و شماره موبایل تایید نشده";
+                    TempData[InfoMessage] = "لطفا از نو ثبت نام کنید";
+                    break;
+                case ResultLoginUser.Success:
+
+                    //اینجا عمل لاگین رو انجام میدیم و ریدایرکت میکنیم به صفحه ی اصلی
+                    var user = await _userService.GetUserByMobileAsync(obj.Mobile.Trim());
+                    
+                    var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                        new Claim(ClaimTypes.Name, user.FirstName),
+                        new Claim(ClaimTypes.MobilePhone,user.Mobile)
+                    }; 
+
+                    var identity = new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    var principal = new ClaimsPrincipal(identity);
+
+                    var properties = new AuthenticationProperties
+                    {
+                        IsPersistent = obj.RememberMe
+                    };
+
+                    await HttpContext.SignInAsync(principal, properties);
+
+                    TempData[SuccessMessage] = "خوش گلیب سوز";
+                    TempData[InfoMessage] = "خونه ی خودت بدون :)";
+
+                    return Redirect("/");
+
+
+            }
+
+
+            return View();
+        }
         #endregion
 
         #region Logout
@@ -74,6 +130,7 @@ namespace MarketCreator.Web.Controllers
         [HttpGet("log-out")]
         public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
