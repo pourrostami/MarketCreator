@@ -1,8 +1,10 @@
-﻿using MarketCreator.Application.Services.Interfaces;
+﻿using GoogleReCaptcha.V3.Interface;
+using MarketCreator.Application.Services.Interfaces;
 using MarketCreator.DataLayer.DTOs.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Security.Claims;
 
 namespace MarketCreator.Web.Controllers
@@ -12,10 +14,12 @@ namespace MarketCreator.Web.Controllers
         #region Constructor
 
         private readonly IUserService _userService;
+        private readonly ICaptchaValidator _captchaValidator; 
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, ICaptchaValidator captchaValidator)
         {
             _userService = userService;
+            _captchaValidator = captchaValidator;
         }
 
         #endregion
@@ -32,6 +36,12 @@ namespace MarketCreator.Web.Controllers
         [HttpPost("register-user"), ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterUsrDTO register)
         {
+
+            if (!await _captchaValidator.IsCaptchaPassedAsync(register.Captcha))
+            {
+                TempData[ErrorMessage] = "شما بعنوان یک کاربر واقعی تایید نشدید";
+                return View(register);
+            }
 
             //برای چک کردن مقادیر وارد شده 
             //که نیاز به کدهای جاوااسکریپتی هم در صفحه داریم
@@ -74,6 +84,14 @@ namespace MarketCreator.Web.Controllers
         [HttpPost("login-user"),ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginUserDTO obj)
         {
+
+            if (!await _captchaValidator.IsCaptchaPassedAsync(obj.Captcha))
+            {
+                TempData[ErrorMessage] = "شما بعنوان یک کاربر واقعی تایید نشدید";
+                return View(obj);
+            }
+
+
             if (!ModelState.IsValid)
                 return View(obj);
 

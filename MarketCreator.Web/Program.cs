@@ -1,4 +1,6 @@
 
+using GoogleReCaptcha.V3;
+using GoogleReCaptcha.V3.Interface;
 using MarketCreator.Application.Services.Implementations;
 using MarketCreator.Application.Services.Interfaces;
 using MarketCreator.DataLayer.Context;
@@ -20,6 +22,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddHttpClient<ICaptchaValidator, GoogleReCaptchaValidator>();
 
 #endregion
 
@@ -55,6 +58,8 @@ builder.Services.AddSingleton<HtmlEncoder>(HtmlEncoder.Create(new[] {
     UnicodeRanges.BasicLatin, UnicodeRanges.Arabic
 }));
 #endregion
+
+
 
 var app = builder.Build();
 

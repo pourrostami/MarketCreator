@@ -1,10 +1,11 @@
 ﻿
 
+using MarketCreator.DataLayer.DTOs.Site;
 using System.ComponentModel.DataAnnotations;
 
 namespace MarketCreator.DataLayer.DTOs.Account
 {
-    public class RegisterUsrDTO
+    public class RegisterUsrDTO:CaptchaViewModel
     {
 
 

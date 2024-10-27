@@ -1,9 +1,10 @@
 ﻿
+using MarketCreator.DataLayer.DTOs.Site;
 using System.ComponentModel.DataAnnotations;
 
 namespace MarketCreator.DataLayer.DTOs.Account
 {
-    public class LoginUserDTO
+    public class LoginUserDTO:CaptchaViewModel
     {
         [Display(Name = "موبایل")]
         [Required(ErrorMessage = "{0} نمی تواند خالی باشد")]
